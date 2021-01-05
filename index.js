@@ -3,6 +3,7 @@ const puppeteer = require('puppeteer');
 const app = express();
 
 const arriva_web_page = 'https://arriva.si/';
+const slo_rail_web_page = 'https://potniski.sz.si/'
 
 //example: http://localhost:5000/arriva?from=Maribor&to=Ptuj
 app.get('/arriva', async (req, res) => {
@@ -22,6 +23,7 @@ app.get('/arriva', async (req, res) => {
     await page.waitForNavigation();
     await page.waitForSelector('.connection');
     const rides = await page.$$('.connection');
+
     for (let ride=0;  ride< rides.length; ride ++){
         if(ride!=0){
             const length = await rides[ride].$eval('div.length', (el)=>el.innerText);
@@ -39,4 +41,35 @@ app.get('/arriva', async (req, res) => {
     }
 );
 
+//example: http://localhost:5000/rail?from=Maribor&to=Ptuj
+app.get("/rail", async(req,res) =>{
+    const browser = await puppeteer.launch({ headless: false });
+    const second_page = await browser.newPage();
+    let listOfRailRides = [];
+
+    await second_page.goto(`${slo_rail_web_page}`);
+    await second_page.evaluate( () => document.getElementById("departure-date").value = "");
+    await second_page.type('input.form-control.flatpickr-input', '8.1.2021');
+    await second_page.waitForTimeout(800);
+    await second_page.type('input#entry-station-selectized', req.query.from);
+    await second_page.keyboard.press('Enter');
+    await second_page.waitForTimeout(800);
+    await second_page.type('input#exit-station-selectized', req.query.to);
+    await second_page.keyboard.press('Enter');
+    await second_page.evaluate(() => {document.querySelector('button[type=submit]').click();});
+    await second_page.waitForNavigation();
+    await second_page.waitForSelector('.connection.card.no-shadow.connection-active');
+    const rail_rides = await second_page.$$('.connection.card.no-shadow.connection-active');
+
+    for (let rail_ride=0;  rail_ride< rail_rides.length; rail_ride ++){
+        const from = await rail_rides[rail_ride].$eval('div.col-12.col-md-10.order-2.order-md-1 > div:nth-child(1) > div > div > div > div > div:nth-child(1) > strong:nth-child(1)', (el)=>el.innerText);
+        const start = await rail_rides[rail_ride].$eval('div.col-12.col-md-10.order-2.order-md-1 > div:nth-child(1) > div > div > div > div > div:nth-child(1) > strong:nth-child(2)', (el)=>el.innerText);
+        const end = await rail_rides[rail_ride].$eval('div.col-12.col-md-10.order-2.order-md-1 > div:nth-child(4) > div > div > div > div > strong:nth-child(2)', (el)=>el.innerText);
+        const time = await rail_rides[rail_ride].$eval('span:nth-child(2) > span.value', (el)=>el.innerText);
+        const to = await rail_rides[rail_ride].$eval('div.col-12.col-md-10.order-2.order-md-1 > div:nth-child(4) > div > div > div > div > strong:nth-child(1)', (el)=>el.innerText);
+        
+        listOfRailRides.push({ from: from, to:to,  time: time, start: start, end:end});
+    }
+    res.json(listOfRailRides);
+});
 app.listen(5000);
