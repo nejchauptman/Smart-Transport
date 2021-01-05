@@ -1,0 +1,19 @@
+{
+  "name": "projekt",
+  "version": "1.0.0",
+  "description": "smart transport",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "index.js": "^0.0.3",
+    "puppeteer": "^5.5.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+
+  },
+  "author": "Nejc Hauptman, Ana Plečko",
+  "license": "ISC"
+}
