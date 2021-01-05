@@ -12,7 +12,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
-
   },
   "author": "Nejc Hauptman, Ana Plečko",
   "license": "ISC"
