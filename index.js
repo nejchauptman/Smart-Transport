@@ -2,19 +2,19 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 const app = express();
 
-const STRAN = 'https://arriva.si/';
+const arriva_web_page = 'https://arriva.si/';
 
-app.get('/', async (req, res) => {
+//example: http://localhost:5000/arriva?from=Maribor&to=Ptuj
+app.get('/arriva', async (req, res) => {
     
-    //headless false = dynamic web page is used
     const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
     let listOfRides = [];
 
-    await page.goto(`${STRAN}`);
-    await page.type('input.input-departure.form-control.ta-field.typeahead', 'Maribor AP')
+    await page.goto(`${arriva_web_page}`);
+    await page.type('input.input-departure.form-control.ta-field.typeahead', req.query.from)
     await page.waitForTimeout(800)
-    await page.type('input[name="destination"]', 'Ptuj AP');
+    await page.type('input[name="destination"]', req.query.to);
     await page.waitForTimeout(800)
     await page.evaluate( () => document.getElementById("trip-date").value = "")
     await page.type('input.form-control.flatpickr-input', '8.1.2021')
@@ -32,14 +32,8 @@ app.get('/', async (req, res) => {
             const transporter = await rides[ride].$eval('div.duration > div.prevoznik > span:nth-child(2)  ', (el)=>el.innerHTML);
             const from = await rides[ride].$eval('div.departure-arrival > table > tbody > tr.departure > td:nth-child(3) > span', (el)=>el.innerText);
             const to = await rides[ride].$eval('div.departure-arrival > table > tbody > tr.arrival > td:nth-child(3) > span', (el)=>el.innerText);
-
             listOfRides.push({ length: length, price: price, start:start, end:end , duration : duration, transporter:transporter, from:from, to: to });
-
         }
-        
-       /* const nekaj = await ride.$eval("div > table", el => el.innerHTML);
-        console.log(nekaj);*/
-
     }
     res.json(listOfRides);
     }
