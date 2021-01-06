@@ -1,11 +1,14 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
 const app = express();
+var cors = require('cors')
+
+app.use(cors())
 
 const arriva_web_page = 'https://arriva.si/';
 const slo_rail_web_page = 'https://potniski.sz.si/'
 
-//example: http://localhost:5000/arriva?from=Maribor&to=Ptuj
+//example: http://localhost:5000/arriva?from=Maribor&to=Ptuj&date=2021-01-26
 app.get('/arriva', async (req, res) => {
     
     const browser = await puppeteer.launch({ headless: false });
@@ -13,12 +16,13 @@ app.get('/arriva', async (req, res) => {
     let listOfRides = [];
 
     await page.goto(`${arriva_web_page}`);
+    await page.waitForTimeout(800)
     await page.type('input.input-departure.form-control.ta-field.typeahead', req.query.from)
     await page.waitForTimeout(800)
     await page.type('input[name="destination"]', req.query.to);
     await page.waitForTimeout(800)
     await page.evaluate( () => document.getElementById("trip-date").value = "")
-    await page.type('input.form-control.flatpickr-input', '8.1.2021')
+    await page.type('input.form-control.flatpickr-input', req.query.date)
     await page.evaluate(() => {document.querySelector('button[type=submit]').click();});
     await page.waitForNavigation();
     await page.waitForSelector('.connection');
@@ -41,7 +45,7 @@ app.get('/arriva', async (req, res) => {
     }
 );
 
-//example: http://localhost:5000/rail?from=Maribor&to=Ptuj
+//example: http://localhost:5000/rail?from=Maribor&to=Ptuj&date=2021-01-26
 app.get("/rail", async(req,res) =>{
     const browser = await puppeteer.launch({ headless: false });
     const second_page = await browser.newPage();
@@ -49,7 +53,7 @@ app.get("/rail", async(req,res) =>{
 
     await second_page.goto(`${slo_rail_web_page}`);
     await second_page.evaluate( () => document.getElementById("departure-date").value = "");
-    await second_page.type('input.form-control.flatpickr-input', '8.1.2021');
+    await second_page.type('input.form-control.flatpickr-input', req.query.date);
     await second_page.waitForTimeout(800);
     await second_page.type('input#entry-station-selectized', req.query.from);
     await second_page.keyboard.press('Enter');
