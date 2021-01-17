@@ -4,14 +4,25 @@
   "description": "smart transport",
   "main": "index.js",
   "dependencies": {
+    "@fortawesome/react-fontawesome": "^0.1.14",
+    "@react-pdf/renderer": "^1.6.12",
+    "bootstrap": "^4.5.3",
     "cors": "^2.8.5",
+    "dom-to-pdf": "^0.1.2",
     "express": "^4.17.1",
+    "html2canvas": "^1.0.0-rc.7",
+    "html2pdf.js": "^0.9.0",
     "index.js": "^0.0.3",
+    "jspdf": "^2.2.0",
     "moment": "^2.29.1",
     "puppeteer": "^5.5.0",
+    "react-bootstrap": "^1.4.3",
     "react-datepicker": "^3.3.0",
     "react-moment": "^1.1.1",
-    "react-moment-input": "^0.2.31"
+    "react-moment-input": "^0.2.31",
+    "react-responsive-carousel": "^3.2.11",
+    "react-scripts": "^4.0.1",
+    "react-to-pdf": "0.0.13"
   },
   "devDependencies": {},
   "scripts": {
