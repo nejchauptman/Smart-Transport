@@ -177,11 +177,11 @@ render() {
       <form onSubmit={this.handleSubmit}>
         <div class="form-group mb-2">
           <label  class="col-form-label">Vstopno mesto: </label>
-            <input class="form-control" value={this.state.from} type='text'name='from' onChange={this.handleChange} required/>
+            <input class="form-control" placeholder= "Maribor" value={this.state.from} type='text'name='from' onChange={this.handleChange} required/>
           </div>
           <div class="form-group mb-2">
           <label class="col-form-label">Izstopno mesto: </label>
-            <input class="form-control" value={this.state.to} type='text' name='to' onChange={this.handleChange} required/>
+            <input class="form-control" placeholder="Ljubljana" value={this.state.to} type='text' name='to' onChange={this.handleChange} required/>
           </div>
           <div class="form-group mb-2">
           <label  class="col-form-label">Datum </label>
