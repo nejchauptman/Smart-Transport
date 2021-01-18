@@ -1,7 +1,6 @@
 import React from 'react';
 import './App.css';
 import { getBus, getRail } from './API/axios.js';
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -59,6 +58,9 @@ handleChange = (event) => {
 render() {
 
   return (
+    <div>
+      
+      <div className="row">
     <form onSubmit={this.handleSubmit}>
     <input
       value={this.state.from}
@@ -81,9 +83,11 @@ render() {
     <input
       type='submit'
     />
-
+   
+    </form>
+  </div>
     <div>
-      <row>
+      <row className="row">
       {this.state.buses.map((bus, index) => (
                             <p key={index}>{bus.from}
                             <p key={index}>{bus.to}</p>
@@ -104,13 +108,14 @@ render() {
                             <p key={index}>{rail.to}</p>
                             <p key={index}>{rail.start}</p>
                             <p key={index}>{rail.end}</p>
+                            <p>Slovenske Železnice</p>
+
                             </p>
                            
                         ))}
       </row>
     </div>
-
-    </form>
+    </div>
     
   );
 

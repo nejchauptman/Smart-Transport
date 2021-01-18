@@ -8,6 +8,7 @@ app.use(cors())
 const arriva_web_page = 'https://arriva.si/';
 const slo_rail_web_page = 'https://potniski.sz.si/'
 
+
 //example: http://localhost:5000/arriva?from=Maribor&to=Ptuj&date=2021-01-26
 app.get('/arriva', async (req, res) => {
     
@@ -41,7 +42,9 @@ app.get('/arriva', async (req, res) => {
             listOfRides.push({ length: length, price: price, start:start, end:end , duration : duration, transporter:transporter, from:from, to: to });
         }
     }
+    await page.close();
     res.json(listOfRides);
+    
     }
 );
 
@@ -74,6 +77,7 @@ app.get("/rail", async(req,res) =>{
         
         listOfRailRides.push({ from: from, to:to,  time: time, start: start, end:end});
     }
+    await second_page.close();
     res.json(listOfRailRides);
-});
+    });
 app.listen(5000);
