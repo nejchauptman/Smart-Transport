@@ -8,8 +8,8 @@ app.use(cors())
 const arriva_web_page = 'https://arriva.si/';
 const slo_rail_web_page = 'https://potniski.sz.si/'
 
-
-//example: http://localhost:5000/arriva?from=Maribor&to=Ptuj&date=2021-01-26
+//for better example, use tomorrow's date
+//example: http://localhost:5000/arriva?from=Maribor&to=Ptuj&date=26.01.2021
 app.get('/arriva', async (req, res) => {
     
     const browser = await puppeteer.launch({ headless: false });
@@ -48,7 +48,8 @@ app.get('/arriva', async (req, res) => {
     }
 );
 
-//example: http://localhost:5000/rail?from=Maribor&to=Ptuj&date=2021-01-26
+//for better example, use tomorrow's date
+//example: http://localhost:5000/rail?from=Maribor&to=Ptuj&date=26.01.2021
 app.get("/rail", async(req,res) =>{
     const browser = await puppeteer.launch({ headless: false });
     const second_page = await browser.newPage();
@@ -67,7 +68,6 @@ app.get("/rail", async(req,res) =>{
     await second_page.waitForNavigation();
     await second_page.waitForSelector('.connection.card.no-shadow.connection-active');
     const rail_rides = await second_page.$$('.connection.card.no-shadow.connection-active');
-
     for (let rail_ride=0;  rail_ride< rail_rides.length; rail_ride ++){
         const from = await rail_rides[rail_ride].$eval('div.col-12.col-md-10.order-2.order-md-1 > div:nth-child(1) > div > div > div > div > div:nth-child(1) > strong:nth-child(1)', (el)=>el.innerText);
         const start = await rail_rides[rail_ride].$eval('div.col-12.col-md-10.order-2.order-md-1 > div:nth-child(1) > div > div > div > div > div:nth-child(1) > strong:nth-child(2)', (el)=>el.innerText);
@@ -75,7 +75,7 @@ app.get("/rail", async(req,res) =>{
         const time = await rail_rides[rail_ride].$eval('span:nth-child(2) > span.value', (el)=>el.innerText);
         const to = await rail_rides[rail_ride].$eval('div.col-12.col-md-10.order-2.order-md-1 > div:nth-child(4) > div > div > div > div > strong:nth-child(1)', (el)=>el.innerText);
         
-        listOfRailRides.push({ from: from, to:to,  time: time, start: start, end:end});
+        listOfRailRides.push({ from: from, to:to,  duration: time, start: start, end:end, transporter: "Slovenske železnice"});
     }
     await second_page.close();
     res.json(listOfRailRides);
